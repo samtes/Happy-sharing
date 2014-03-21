@@ -1,6 +1,9 @@
 NSS Cohort 4 Integrated Node.js Template
 ========================================
 
+[![Build Status](https://travis-ci.org/samtes/Happy-sharing.png)](https://travis-ci.org/samtes/Happy-sharing)
+
+
 - Node.js
 - Express
 - MongoDB
