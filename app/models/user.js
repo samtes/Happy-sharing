@@ -9,26 +9,25 @@ var fs = require('fs');
 var users = global.nss.db.collection('users');
 var Mongo = require('mongodb');
 var email = require('../lib/email');
-
+//var _ = require('lodash');
 
 
 function User(user){
   this.name = user.name;
   this.email = user.email;
   this.password = user.password;
-  this.pic = user.pic ? user.pic : null;
-  this.role = user.role;
+  this.role = 'member';
 }
 
 
-User.prototype.register = function(fn){
+User.prototype.register = function(oldpath, fn){
   var self = this;
 
   hashPassword(self.password, function(hashedPwd){
     self.password = hashedPwd;
-    if(self.pic){
-      addPic(self.pic, function(path){
-        self.pic = path;
+    if(path.extname(oldpath)){
+      addPic(oldpath, function(newpath){
+        self.pic = newpath;
       });
     }
     insert(self, function(err){
@@ -71,10 +70,35 @@ function insert(user, fn){
   });
 }
 
-
 User.findById = function(id, fn){
   var _id = Mongo.ObjectID(id);
-  users.findOne({_id:_id}, function(err, record){
-    fn(record);
+  users.findOne({_id:_id}, function(err, user){
+    if(user){
+      fn(user);
+    } else {
+      fn();
+    }
+  });
+};
+
+User.prototype.update = function(fn){
+  users.update({_id:this._id}, this, function(err, count){
+    fn(err);
+  });
+};
+
+User.findByEmailandPassword = function(email, password, fn){
+  users.findOne({email:email}, function(err, user){
+    if(user){
+      bcrypt.compare(password, user.password, function(err, result){
+        if(result){
+          fn(user);
+        } else {
+          fn();
+        }
+      });
+    } else {
+      fn();
+    }
   });
 };
