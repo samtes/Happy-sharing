@@ -116,4 +116,53 @@ describe('User', function(){
       });
     });
   });
+
+  describe('.findbyId', function(){
+    it('should find an account by id', function(done){
+      var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'member'});
+      var u3 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234', role:'member'});
+      u2.register('', function(){
+        u3.register('', function(){
+          var a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u2._id.toString(), members:[], logic:'0', update:[]});
+          a1.insert(function(){
+            a1.addMember(u3._id.toString(), function(){
+              Account.findById(a1._id.toString(), function(account){
+                expect(account.members).to.have.length(1);
+                expect(account.name).to.be.equal('rent');
+                expect(account.description).to.be.equal('sharing the rent of our apartment');
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('.findByUserId', function(){
+    it('should find all the accounts by user id', function(done){
+      var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'member'});
+      var u3 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234', role:'member'});
+      u2.register('', function(){
+        u3.register('', function(){
+          var a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u2._id.toString(), members:[], logic:'0', update:[]});
+          var a2 = new Account({name: 'car payment', description:'sharing the car payment', ownerId:u2._id.toString(), members:[], logic:'0', update:[]});
+          var a3 = new Account({name: 'mortgage', description:'sharing house mortgage', ownerId:u2._id.toString(), members:[], logic:'0', update:[]});
+          var a4 = new Account({name: 'credit card', description:'sharing credit card', ownerId:u3._id.toString(), members:[], logic:'0', update:[]});
+          a1.insert(function(){
+            a2.insert(function(){
+              a3.insert(function(){
+                a4.insert(function(){
+                  Account.findByUserId(u2._id.toString(), function(accounts){
+                    expect(accounts).to.have.length(3);
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });

@@ -78,5 +78,16 @@ Account.prototype.removeMember = function(memberId, fn){
   });
 };
 
+Account.findById = function(id, fn){
+  var _id = Mongo.ObjectID(id);
+  accounts.findOne({_id:_id}, function(err, record){
+    fn(record);
+  });
+};
 
-
+Account.findByUserId = function(id, fn){
+  var ownerId = Mongo.ObjectID(id);
+  accounts.find({ownerId:ownerId}).toArray(function(err, records){
+    fn(records);
+  });
+};
