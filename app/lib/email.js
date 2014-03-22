@@ -5,7 +5,15 @@ var fs = require('fs');
 var jade = require('jade');
 
 exports.sendWelcome = function(data, fn){
-  send({from:'admin@samtes.us', to:data.to, subject:'Welcome to AirBnB', template:'welcome'}, fn);
+  send({from:'admin@samtes.us', to:data.to, name:data.name, subject:'Welcome to Happy Share', template:'welcome'}, fn);
+};
+
+exports.addedToAccount = function(data, fn){
+  send({from:'admin@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-added'}, fn);
+};
+
+exports.removedAccount = function(data, fn){
+  send({from:'admin@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-removed'}, fn);
 };
 
 function send(data, fn){

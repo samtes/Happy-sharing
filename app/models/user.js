@@ -32,7 +32,7 @@ User.prototype.register = function(oldpath, fn){
     }
     insert(self, function(err){
       if(self._id){
-        email.sendWelcome({to:self.email}, function(err, body){
+        email.sendWelcome({to:self.email, name:self.name}, function(err, body){
           fn(err, body);
         });
       }else{
