@@ -96,7 +96,7 @@ describe('User', function(){
   });
 
   describe('remove member', function(){
-    it('should insert a member to the members array', function(done){
+    it('should remove a member to the members array', function(done){
       var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'member'});
       var u3 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234', role:'member'});
       u2.register('', function(){
@@ -127,7 +127,8 @@ describe('User', function(){
           a1.insert(function(){
             a1.addMember(u3._id.toString(), function(){
               Account.findById(a1._id.toString(), function(account){
-                expect(account.members).to.have.length(1);
+                console.log('THIS IS THE ACCOUNT RETURNED', account);
+                expect(account.members).to.have.length(2);
                 expect(account.name).to.be.equal('rent');
                 expect(account.description).to.be.equal('sharing the rent of our apartment');
                 done();
@@ -154,12 +155,29 @@ describe('User', function(){
               a3.insert(function(){
                 a4.insert(function(){
                   Account.findByUserId(u2._id.toString(), function(accounts){
+                    console.log('THESE ARE THE ACCOUNTS RETURNED', accounts);
                     expect(accounts).to.have.length(3);
                     done();
                   });
                 });
               });
             });
+          });
+        });
+      });
+    });
+  });
+
+  describe('.sendInviteEmail', function(){
+    it('should send invitation email to new user', function(done){
+      var data = {email:'sweldemariam@gmail.com', message:'Hi sam join happy-share'};
+      var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'member'});
+      u2.register('', function(){
+        var a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u2._id.toString(), members:[], logic:'0', update:[]});
+        a1.insert(function(){
+          Account.sendInviteEmail(data, function(err, body){
+            expect(body).to.be.ok;
+            done();
           });
         });
       });

@@ -17,7 +17,7 @@ function Account(account){
   this.name = account.name;
   this.description = account.description;
   this.ownerId = Mongo.ObjectID(account.ownerId);
-  this.members = [this.ownerId];
+  this.members = [account.ownerId];
   this.update = [];
   this.logic = account.logic;
 }
@@ -29,8 +29,8 @@ Account.prototype.insert = function(fn){
 };
 
 function updateInsert(account, fn){
-  accounts.insert(account, function(err, record){
-    fn(record);
+  accounts.update({_id:account._id}, account, function(err, count){
+    fn(count);
   });
 }
 
@@ -40,8 +40,9 @@ Account.prototype.addMember = function(memberId, fn){
   users.findOne({_id:_id}, function(err, user){
     if(user){
       self.members.push(memberId);
-      updateInsert(self, function(record){
-        if(record){
+      self.members = _.uniq(self.members);
+      updateInsert(self, function(count){
+        if(count){
           email.addedToAccount({to:user.email, name:user.name, account:self.name}, function(err, body){
             fn(err, body);
           });
@@ -81,13 +82,20 @@ Account.prototype.removeMember = function(memberId, fn){
 Account.findById = function(id, fn){
   var _id = Mongo.ObjectID(id);
   accounts.findOne({_id:_id}, function(err, record){
-    fn(record);
+    fn(_.extend(record, Account.prototype));
+  });
+};
+
+Account.sendInviteEmail = function(data, fn){
+  email.inviteMember({to:data.email, message:data.message}, function(err, body){
+    fn(err, body);
   });
 };
 
 Account.findByUserId = function(id, fn){
   var ownerId = Mongo.ObjectID(id);
   accounts.find({ownerId:ownerId}).toArray(function(err, records){
+    console.log(records);
     fn(records);
   });
 };

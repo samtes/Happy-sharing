@@ -1,5 +1,14 @@
 extends ../shared/template
 
 block content
-  h1= title
 
+  .row
+    .small-6.columns
+      form(method='post', action='/accounts', enctype='multipart/form-data')
+        fieldset
+          legend= title
+          label Account Name
+          input(type='text', name='name' autofocus=true, required=true)
+          label Description
+          textarea(type='text', name='description' required=true)
+          button.tiny.radius Create Account

@@ -9,7 +9,7 @@ var fs = require('fs');
 var users = global.nss.db.collection('users');
 var Mongo = require('mongodb');
 var email = require('../lib/email');
-//var _ = require('lodash');
+var _ = require('lodash');
 
 
 function User(user){
@@ -74,10 +74,16 @@ User.findById = function(id, fn){
   var _id = Mongo.ObjectID(id);
   users.findOne({_id:_id}, function(err, user){
     if(user){
-      fn(user);
+      fn(_.extend(user, User.prototype));
     } else {
       fn();
     }
+  });
+};
+
+User.findAll = function(fn){
+  users.find().toArray(function(err, records){
+    fn(records);
   });
 };
 

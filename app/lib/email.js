@@ -5,11 +5,15 @@ var fs = require('fs');
 var jade = require('jade');
 
 exports.sendWelcome = function(data, fn){
-  send({from:'admin@samtes.us', to:data.to, name:data.name, subject:'Welcome to Happy Share', template:'welcome'}, fn);
+  send({from:'admin@happyshare.us', to:data.to, name:data.name, subject:'Welcome to Happy Share', template:'welcome'}, fn);
+};
+
+exports.inviteMember = function(data, fn){
+  send({from:'admin@happyshare.us', to:data.to, message:data.message, subject:'You have been invited to Haapy-share', template:'invited'}, fn);
 };
 
 exports.addedToAccount = function(data, fn){
-  send({from:'admin@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-added'}, fn);
+  send({from:'admin@happyshare.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-added'}, fn);
 };
 
 exports.removedAccount = function(data, fn){

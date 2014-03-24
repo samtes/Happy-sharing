@@ -7,3 +7,19 @@ block content
   #email= user.email
   #role= user.role
 
+  if accounts.length === 0
+    a(href='/accounts/new') Create Happy-share account
+  else
+    table
+      thead
+        th Name
+        th Members
+        th Description
+      each account in accounts
+        tbody
+          tr
+            td: a(href='/accounts/'+ account._id.toString())= account.name
+            td
+              each member in account.members
+                a(href='#')= member
+            td= account.description

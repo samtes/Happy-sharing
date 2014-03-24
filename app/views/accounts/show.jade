@@ -1,0 +1,46 @@
+extends ../shared/template
+
+block content
+  h1= account.name
+
+  if account
+    .row
+      .small-6.columns
+        form(method='post', action='/accounts/member/'+account._id.toString())
+          fieldset
+            legend Add members
+            if users.length > 0
+              label select users
+              select(name='member')
+                each user in users
+                  if user._id.toString()!== account.ownerId.toString()
+                    option(value= user._id.toString())= user.name
+              button.tiny.radius Add Member
+    .row
+      .small-6.columns
+            label(style='text-align: center') -----OR-----
+    .row
+      .small-6.columns
+        form(method='post', action='/accounts/'+account._id.toString())
+          fieldset
+            legend Invite members
+            label Member's email
+            input(type='email', name='email', required=true)
+            label Send a note
+            textarea(type='text', name='message', required=true)
+            button.tiny.radius Send Note
+
+      .small-6.columns
+        form(method='post', action='/accounts', enctype='multipart/form-data')
+          fieldset
+            legend=title
+            label Attachment
+            input(type='file', name='attachment')
+            button.tiny.radius Add
+
+  .row
+    .small-6.columns
+      #name= account.name
+      #desc= account.description
+      each member in account.members
+        .member= member

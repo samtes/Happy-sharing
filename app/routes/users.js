@@ -1,6 +1,7 @@
 'use strict';
 
 var User = require('../models/user');
+var Account = require('../models/account');
 
 
 exports.index = function(req, res){
@@ -18,7 +19,7 @@ exports.create = function(req, res){
       User.findByEmailandPassword(req.body.email, req.body.password, function(foundUser){
         if(foundUser){
           req.session.regenerate(function(){
-            req.session.userId = user._id;
+            req.session.userId = user._id.toString();
             req.session.save(function(){
               res.redirect('users/'+foundUser._id.toString());
             });
@@ -41,7 +42,7 @@ exports.authenticate = function(req, res){
   User.findByEmailandPassword(req.body.email, req.body.password, function(user){
     if(user){
       req.session.regenerate(function(){
-        req.session.userId = user._id;
+        req.session.userId = user._id.toString();
         req.session.save(function(){
           res.redirect('users/'+user._id.toString());
         });
@@ -54,8 +55,13 @@ exports.authenticate = function(req, res){
 
 exports.show = function(req, res){
   User.findById(req.params.id, function(user){
-    console.log(user);
-    res.render('users/show', {user:user});
+    Account.findByUserId(user._id.toString(), function(accounts){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>user>>>>>>>>>>>>>>>>>>>>');
+      console.log(user);
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>accounts>>>>>>>>>>>>>>>>>>>>');
+      console.log(accounts);
+      res.render('users/show', {user:user, accounts:accounts});
+    });
   });
 };
 

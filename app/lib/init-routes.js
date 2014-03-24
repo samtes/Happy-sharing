@@ -23,6 +23,8 @@ function load(app, fn){
   app.get('/accounts/new', d, accounts.fresh);
   app.get('/accounts/:id', d, accounts.show);
   app.post('/accounts', d, accounts.create);
+  app.post('/accounts/member/:id', d, accounts.member);
+  app.post('/accounts/:id', d, accounts.invite);
   app.post('/register', d, users.create);
   app.get('/login', d, users.login);
   app.post('/login', d, users.authenticate);

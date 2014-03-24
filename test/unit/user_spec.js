@@ -128,4 +128,37 @@ describe('User', function(){
       });
     });
   });
+
+  describe('findAll', function(){
+    it('should find all users', function(done){
+      var u1 = new User({name: 'Sam', email:'sam@nomail.com', password:'1234', role:'member'});
+      var u2 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234', role:'member'});
+      var u3 = new User({name: 'Jim', email:'jim@nomail.com', password:'1234', role:'member'});
+      u1.register('', function(){
+        u2.register('', function(){
+          u3.register('', function(){
+            User.findAll(function(records){
+              expect(records).to.have.length(3);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('.update', function(){
+    it('should update user record in the db', function(done){
+      var u1 = new User({name: 'Sam', email:'sam@nomail.com', password:'1234', role:'member'});
+      u1.register('', function(){
+        User.findById(u1._id.toString(), function(user){
+          user.name = 'Jim';
+          user.update(function(err){
+            expect(user.name).to.be.equal('Jim');
+            done();
+          });
+        });
+      });
+    });
+  });
 });

@@ -7,7 +7,7 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var app = require('../../app/app');
 var expect = require('chai').expect;
-var User, Account, u1;
+var User, Account, u1, u2, a1, a2, a3;
 var cookie;
 
 describe('account', function(){
@@ -34,14 +34,26 @@ describe('account', function(){
       fs.createReadStream(origfile).pipe(fs.createWriteStream(copyfile1));
       global.nss.db.dropDatabase(function(err, result){
         u1 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'owner'});
+        u2 = new User({name: 'Sam', email:'samooi@nomail.com', password:'1234', role:'owner'});
         u1.register('', function(){
-          request(app)
-          .post('/login')
-          .field('email', 'sami@nomail.com')
-          .field('password', '1234')
-          .end(function(err, res){
-            cookie = res.headers['set-cookie'];
-            done();
+          u2.register('', function(){
+            a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u1._id.toString(), members:[], logic:'0', update:[]});
+            a2 = new Account({name: 'rent 2', description:'sharing the rent of our apartment 2', ownerId:u1._id.toString(), members:[], logic:'0', update:[]});
+            a3 = new Account({name: 'rent 3', description:'sharing the rent of our apartment 3', ownerId:u1._id.toString(), members:[], logic:'0', update:[]});
+            a1.insert(function(){
+              a2.insert(function(){
+                a3.insert(function(){
+                  request(app)
+                  .post('/login')
+                  .field('email', 'sami@nomail.com')
+                  .field('password', '1234')
+                  .end(function(err, res){
+                    cookie = res.headers['set-cookie'];
+                    done();
+                  });
+                });
+              });
+            });
           });
         });
       });
@@ -79,56 +91,43 @@ describe('account', function(){
       });
     });
   });
-/*
-  describe('GET /login', function(){
-    it('should display the login page', function(done){
-      request(app)
-      .get('/login')
-      .end(function(err, res){
-        expect(res.status).to.equal(200);
-        expect(res.text).to.include('Login');
-        done();
-      });
-    });
-  });
 
-  describe('POST /login', function(){
-    it('should login a new user and update lastLogin', function(done){
+  describe('GET /accounts/:id', function(){
+    it('should display the account page', function(done){
       request(app)
-      .post('/login')
-      .field('email', 'sami@nomail.com')
-      .field('password', '1234')
+      .get('/accounts/'+a1._id.toString())
       .end(function(err, res){
         expect(res.status).to.equal(302);
-        expect(res.text).to.include('Moved Temporarily. Redirecting to /');
-        done();
-      });
-    });
-
-    it('should not login a new user', function(done){
-      request(app)
-      .post('/login')
-      .field('email', 'wrong@nomail.com')
-      .field('password', '1234')
-      .end(function(err, res){
-        expect(res.status).to.equal(200);
-        expect(res.text).to.include('Login');
-        done();
-      });
-    });
-
-    it('should not login a new user', function(done){
-      request(app)
-      .post('/login')
-      .field('email', 'sami1@nomail.com')
-      .field('password', '12234')
-      .end(function(err, res){
-        expect(res.status).to.equal(200);
-        expect(res.text).to.include('Login');
         done();
       });
     });
   });
+
+  describe('POST /accounts/:id', function(){
+    it('should send invitation email to unregistered user', function(done){
+      request(app)
+      .post('/accounts/'+a1._id.toString())
+      .field('email', 'sami@nomail.com')
+      .field('message', 'Hi this is Sam')
+      .end(function(err, res){
+        expect(res.status).to.equal(302);
+        done();
+      });
+    });
+  });
+
+  describe('POST /accounts/member/:id', function(){
+    it('should add a member to an account', function(done){
+      request(app)
+      .post('/accounts/member/'+a1._id.toString())
+      .field('member', u2._id.toString())
+      .end(function(err, res){
+        expect(res.status).to.equal(302);
+        done();
+      });
+    });
+  });
+/*
 
   describe('GET /logout', function(){
     it('should log a user out of the app', function(done){

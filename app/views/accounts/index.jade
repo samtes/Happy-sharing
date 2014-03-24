@@ -3,3 +3,23 @@ extends ../shared/template
 block content
   h1= title
 
+
+  if accounts.length === 0
+    a(href='/accounts/new') Create Happy-share account
+  else
+    table
+      thead
+        th Name
+        th Owner
+        th Members
+        th Description
+      each account in accounts
+        tbody
+          tr
+            td: a(href='/accounts/'+ account._id.toString())= account.name
+            td: a(href='/users/'+user._id.toString())= user.name
+            td
+              each member in account.members
+                a(href='#')= member.name
+            td= account.description
+

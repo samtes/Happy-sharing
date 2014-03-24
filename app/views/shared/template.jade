@@ -19,13 +19,18 @@ html(class='no-js', lang='en')
 
       section.top-bar-section
         ul.left
+          if user
+            li.divider
+            li: a(href='/accounts') Accounts
+            li.divider
+            li: a(href='/accounts/new') Create Account
         ul.right
           if user
             if user.pic
               li.divider
               li: div#pic(style='background-image: url("'+user.pic+'")')
             li.divider
-            li: a(href='users/'+user._id.toString())='Welcome '+user.name
+            li: a(href='/users/'+user._id.toString())='Welcome '+user.name
             li.divider
             li: a(href='/logout') Logout
           else
