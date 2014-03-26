@@ -1,0 +1,43 @@
+extends ../shared/template
+
+block content
+  h3= title
+  h6 Account:
+    a(href='/accounts/'+account._id.toString())=' '+ account.name
+  h6= 'Description: ' + account.description
+
+  .row
+    .small-6.columns
+      table(style='width:100%')
+        thead
+          th Members
+          th Email
+          th Share
+        tbody
+          each user in users
+            tr
+              td=user.name
+              td=user.email
+              each share in account.logics
+                if share.hasOwnProperty(user._id.toString())
+                  td= share[user._id.toString()]+'%'
+  if account.update.length > 0
+    .row
+      .small-6.columns
+        table(style='width:100%')
+          thead
+            th Date
+            th Amount
+            th User
+          tbody
+            each data in account.update
+              tr
+                td= data.date
+                td= data.amount
+                each user in users
+                  if data.paidBy === user._id.toString()
+                    td= user.name
+
+
+
+

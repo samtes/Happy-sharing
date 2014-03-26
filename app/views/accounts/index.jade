@@ -18,8 +18,6 @@ block content
           tr
             td: a(href='/accounts/'+ account._id.toString())= account.name
             td: a(href='/users/'+user._id.toString())= user.name
-            td
-              each member in account.members
-                a(href='#')= member.name
+            td(style='text-align: center'): a(href='#')=account.members.length
             td= account.description
 

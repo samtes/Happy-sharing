@@ -1,0 +1,20 @@
+extends ../shared/template
+
+block content
+  h1= account.name
+  h5= account.description
+
+  if members.length === 0
+    a(href='/accounts/new') Create Happy-share account
+  else
+    table
+      thead
+        th Name
+        th Email
+        th Role
+      each memberin members
+        tbody
+          tr
+            td: a(href='/users/'+ member._id.toString())= member.name
+            td: a(href='#')= member.email
+            td= member.role

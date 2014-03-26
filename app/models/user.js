@@ -17,6 +17,7 @@ function User(user){
   this.email = user.email;
   this.password = user.password;
   this.role = 'member';
+  this.accounts = [];
 }
 
 
@@ -70,6 +71,12 @@ function insert(user, fn){
   });
 }
 
+User.findByAccountId = function(id, fn){
+  users.find({accounts:id}).toArray(function(err, records){
+    fn(records);
+  });
+};
+
 User.findById = function(id, fn){
   var _id = Mongo.ObjectID(id);
   users.findOne({_id:_id}, function(err, user){
@@ -108,3 +115,4 @@ User.findByEmailandPassword = function(email, password, fn){
     }
   });
 };
+

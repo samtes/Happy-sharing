@@ -56,11 +56,10 @@ exports.authenticate = function(req, res){
 exports.show = function(req, res){
   User.findById(req.params.id, function(user){
     Account.findByUserId(user._id.toString(), function(accounts){
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>user>>>>>>>>>>>>>>>>>>>>');
-      console.log(user);
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>accounts>>>>>>>>>>>>>>>>>>>>');
-      console.log(accounts);
-      res.render('users/show', {user:user, accounts:accounts});
+      Account.findByMemberId(req.params.id, function(membersOf){
+        console.log('*&^%$#@@!!@#$%^^&&&&========', membersOf, '=======JUYVHGFDR$%^&*#@@@#$$%%');
+        res.render('users/show', {user:user, membersOf:membersOf, accounts:accounts});
+      });
     });
   });
 };

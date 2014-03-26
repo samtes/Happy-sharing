@@ -1,11 +1,13 @@
 extends ../shared/template
 
 block content
-  h1= account.name
+  h3= 'Account: '+ account.name
+  h6= account.description +' with '
+    a(href='/accounts/members/'+account._id.toString())= account.members.length + ' members'
 
   if account
     .row
-      .small-6.columns
+      .small-5.columns
         form(method='post', action='/accounts/member/'+account._id.toString())
           fieldset
             legend Add members
@@ -16,11 +18,14 @@ block content
                   if user._id.toString()!== account.ownerId.toString()
                     option(value= user._id.toString())= user.name
               button.tiny.radius Add Member
-    .row
-      .small-6.columns
-            label(style='text-align: center') -----OR-----
-    .row
-      .small-6.columns
+      .small-2.columns
+        label &nbsp
+        label &nbsp
+        label &nbsp
+        label &nbsp
+        label &nbsp
+        label(style='text-align: center') -----OR-----
+      .small-5.columns
         form(method='post', action='/accounts/'+account._id.toString())
           fieldset
             legend Invite members
@@ -30,17 +35,27 @@ block content
             textarea(type='text', name='message', required=true)
             button.tiny.radius Send Note
 
-      .small-6.columns
-        form(method='post', action='/accounts', enctype='multipart/form-data')
+    .row
+      .small-3.columns
+        form(method='post', action='/accounts/logic/'+account._id.toString())
           fieldset
-            legend=title
-            label Attachment
-            input(type='file', name='attachment')
-            button.tiny.radius Add
-
+            legend Enter Share Amount
+            each member in members
+              label= member.name +'\'s share in %'
+              input(type='text', name=member._id.toString())
+            button.tiny.radius Define Logic
   .row
-    .small-6.columns
-      #name= account.name
-      #desc= account.description
-      each member in account.members
-        .member= member
+    .small-5.columns
+      form(method='post', action='/accounts/payments/'+account._id.toString(), enctype='multipart/form-data')
+        fieldset
+          legend=title
+          .small-7.columns
+            label Date
+            input(type='date', required=true,  name='date')
+          .small-5.columns
+            label Amount
+            input(type='text', required=true, name='amount')
+          label Attachment
+          input(type='file', name='attachment')
+          button.tiny.radius Add
+

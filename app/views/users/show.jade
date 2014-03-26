@@ -7,7 +7,7 @@ block content
   #email= user.email
   #role= user.role
 
-  if accounts.length === 0
+  if membersOf.length === 0
     a(href='/accounts/new') Create Happy-share account
   else
     table
@@ -15,11 +15,10 @@ block content
         th Name
         th Members
         th Description
-      each account in accounts
-        tbody
+      tbody
+      each account in membersOf
           tr
             td: a(href='/accounts/'+ account._id.toString())= account.name
-            td
-              each member in account.members
-                a(href='#')= member
+            td(style='text-align: center'): a(href='/accounts/members/'+account._id.toString())= account.members.length
             td= account.description
+

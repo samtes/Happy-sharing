@@ -21,8 +21,11 @@ function load(app, fn){
   app.get('/register', d, users.fresh);
   app.get('/accounts', d, accounts.index);
   app.get('/accounts/new', d, accounts.fresh);
+  app.get('/accounts/members/:id', d, accounts.showMember);
   app.get('/accounts/:id', d, accounts.show);
   app.post('/accounts', d, accounts.create);
+  app.post('/accounts/logic/:id', d, accounts.setLogic);
+  app.post('/accounts/payments/:id', d, accounts.paid);
   app.post('/accounts/member/:id', d, accounts.member);
   app.post('/accounts/:id', d, accounts.invite);
   app.post('/register', d, users.create);

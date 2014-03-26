@@ -11,6 +11,7 @@ var accounts = global.nss.db.collection('accounts');
 var Mongo = require('mongodb');
 var email = require('../lib/email');
 var _ = require('lodash');
+var User = require('./user');
 
 
 function Account(account){
@@ -19,7 +20,7 @@ function Account(account){
   this.ownerId = Mongo.ObjectID(account.ownerId);
   this.members = [account.ownerId];
   this.update = [];
-  this.logic = account.logic;
+  this.logics = [] ;
 }
 
 Account.prototype.insert = function(fn){
@@ -36,9 +37,10 @@ function updateInsert(account, fn){
 
 Account.prototype.addMember = function(memberId, fn){
   var self = this;
-  var _id = Mongo.ObjectID(memberId);
-  users.findOne({_id:_id}, function(err, user){
+  User.findById(memberId, function(user){
     if(user){
+      user.accounts.push(self._id.toString());
+      user.update(function(){});
       self.members.push(memberId);
       self.members = _.uniq(self.members);
       updateInsert(self, function(count){
@@ -86,11 +88,42 @@ Account.findById = function(id, fn){
   });
 };
 
+Account.findByMemberId = function(id, fn){
+  accounts.find({members:id}).toArray(function(err, records){
+    fn(records);
+  });
+};
+
 Account.sendInviteEmail = function(data, fn){
   email.inviteMember({to:data.email, message:data.message}, function(err, body){
     fn(err, body);
   });
 };
+
+Account.prototype.payment = function(data, paidBy, account, users, fn){
+  var self = this;
+  self.update.push(data);
+  updateInsert(self, function(count){
+    var emailData = {amount:data.amount, paidBy:paidBy.name};
+    getEmails(users, emailData, function(){
+      fn(count);
+    });
+  });
+};
+
+function getEmails(users, data, fn){
+  _.map(users, function(user){
+    return sendPaymentEmail(user.email, data, function(){
+    });
+  });
+  fn();
+}
+
+function sendPaymentEmail(toEmail, data, fn){
+  email.paymentMade({to:toEmail, amount:data.amount, paidBy:data.name}, function(err, body){
+    fn(err, body);
+  });
+}
 
 Account.findByUserId = function(id, fn){
   var ownerId = Mongo.ObjectID(id);
@@ -99,3 +132,14 @@ Account.findByUserId = function(id, fn){
     fn(records);
   });
 };
+
+Account.prototype.logic = function(data, fn){
+  var self = this;
+  self.logics = [];
+  self.logics.push(data);
+  updateInsert(self, function(count){
+    fn(count);
+  });
+};
+
+

@@ -20,6 +20,10 @@ exports.removedAccount = function(data, fn){
   send({from:'admin@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-removed'}, fn);
 };
 
+exports.paymentMade = function(data, fn){
+  send({from:'admin@happyshare.us', to:data.to, account:data.account, subject:'Happy-Share Payment Made', template:'payment'}, fn);
+};
+
 function send(data, fn){
   if(data.to.match(/@nomail.com/g)){fn(); return;}
 
