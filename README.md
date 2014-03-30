@@ -18,10 +18,11 @@ NSS Cohort 4 Integrated Node.js Template
 <span><h6>Update Payment:</h6></span> members update payment and also attach receipt (optional)
 <span><h6>Track Payments:</h6></span> keep track of payments and see what you are owed and what you owe.
 <h5>Future plan for the site:</h5>
-<p>Add on site payment method: users should be able to transfer payments on the site
+<span><h6>Add on site payment method:</h6></span> users should be able to transfer payments on the site
 <span><h6>Text feature:</h6></span> updates will be send by text to the users
-<span><h6>Make more mobile friendly:</h6></span> users can use it with mobile but it can get much better
-Enjoy your sharing experience and feel free to give us feed back on my git hub comment area.</p>
+<span><h6>Make more mobile friendly:</h6></span> users can still use it with a mobile devoce but there are still improvements to be made.
+
+<p>Enjoy your sharing experience and feel free to give us feed back on my git hub comment area.</p>
 
 Thanks!
 
