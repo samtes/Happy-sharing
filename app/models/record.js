@@ -71,7 +71,7 @@ function processPaymentEmails(data, fn){
 }
 
 function sendEmail(toEmail, name, data, fn){
-  email.paymentMade({to:toEmail, name:name, amount:data.amount, day:data.day, paidBy:data.paidBy}, function(err, body){
+  email.paymentMade({to:toEmail, name:name, amount:accounting.formatMoney(data.amount), day:data.day, paidBy:data.paidBy}, function(err, body){
     fn(err, body);
   });
 }
