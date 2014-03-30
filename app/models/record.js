@@ -10,6 +10,7 @@ var Mongo = require('mongodb');
 var email = require('../lib/email');
 var _ = require('lodash');
 var accounting = require('accounting');
+var moment = require('moment');
 
 
 function Record(record){
@@ -71,7 +72,7 @@ function processPaymentEmails(data, fn){
 }
 
 function sendEmail(toEmail, name, data, fn){
-  email.paymentMade({to:toEmail, name:name, amount:accounting.formatMoney(data.amount), day:data.day, paidBy:data.paidBy}, function(err, body){
+  email.paymentMade({to:toEmail, name:name, amount:accounting.formatMoney(data.amount), day:moment(data.day).format('MMM Do YY'), paidBy:data.paidBy}, function(err, body){
     fn(err, body);
   });
 }
