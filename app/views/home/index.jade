@@ -1,5 +1,38 @@
 extends ../shared/template
 
+block less
+    link(rel='stylesheet', href='/less/home.css')
+
 block content
-  h1= title
+  #home
+    h3= title
+
+    p This is an application that makes the expense sharing process simple, easy and fun. As simple as one – two – three! Create an account,  add or invite members, and update payments and keep track of your payments.  
+
+    strong The way the site works:
+
+    p
+      ul
+        li <strong>Register:</strong> register to create a user account on the site to start Happy-sharing.
+        li <strong>Login:</strong> login to your account to create an account
+        li <strong>Invite members:</strong> You can invite a friend by sending a Happy-share note to share in an account
+        li <strong>Add members:</strong> You can also add a happy-share member from the list of users on site
+        li <strong>Set share:</strong> assign a percentile share for each members
+        li <strong>Update Payment:</strong> members update payment and also attach receipt (optional)
+        li <strong>Track Payments:</strong> keep track of payments and see what you are owed and what you owe.
+
+    strong Future plan for the site:
+
+    p
+      ul
+        li <strong>Add on site payment method:</strong> users should be able to transfer payments on the site
+        li <strong>Text feature:</strong> updates will be send by text to the users
+        li <strong>Make more mobile friendly</strong> users can use it with mobile but it can get much better
+
+    p Enjoy your sharing experience and feel free to give us feed back on the following 
+      a(href='#') feedback@happyshare.us
+
+
+
+
 

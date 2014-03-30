@@ -1,5 +1,8 @@
 extends ../shared/template
 
+block less
+    link(rel='stylesheet', href='/less/account-history.css')
+
 block content
   h3= title
   h6 Account:
@@ -7,37 +10,138 @@ block content
   h6= 'Description: ' + account.description
 
   .row
+    .small-12.columns#menu
+      ul
+        li#update-member: a(href='#')= 'Update Members'
+        li: a(href='#')='/'
+        li#set-share: a(href='#')= 'Set Share'
+        li: a(href='#')='/'
+        li#update-payment: a(href='#')= 'Update Payment'
+        li: a(href='#')='/'
+        li#view-members: a(href='#')= 'View Members'
+
+
+  .row#container.hide
+    #background
+    .small-4.columns#share-set-form
+      a#close(href='#')='close'
+      form(method='post', action='/accounts/logic/'+account._id.toString())
+        fieldset
+          legend Set Share
+          each member in users
+            .row
+              .small-12.columns
+                label= member.name +'\'s share'
+                input(type='text', name=member._id.toString(), placeholder='in %')
+          button.tiny.radius.expand set
+
+
+
+
+  .row#container-payment.hide
+    #background-payment
+    .small-2.columns#payment-form
+      a#close-pay-form(href='#')='close'
+      form(method='post', action='/records/new/'+account._id.toString(), enctype='multipart/form-data')
+        fieldset
+          legend Update Payment
+          .row
+            .small-12.columns.large-7.columns
+              label Date
+              input(type='date', required=true,  name='date')
+            .small-12.columns.large-5.columns
+              label Amount
+              input(type='text', required=true, name='amount')
+          .row
+            .small-12.columns
+              label Note
+              textarea(type='text', maxlength='70', name='note', placeholder='Use less than 70 characters...')
+          .row
+            .small-12.columns
+              label Attachment
+              input(type='file', name='attachment')
+              button.tiny.radius Update payment
+
+
+  .row#container-member.hide
+    #background-member
+    .small-12.columns.large-4.columns#new-account
+      a#close-member-form(href='#')='close'
+      .row
+        .small-12.columns
+          form(method='post', action='/accounts/member/'+account._id.toString())
+            fieldset
+              legend Add members
+              if allUsers.length > 0
+                label select users
+                select(name='member', required=true)
+                  each id in notMembers
+                    each user in allUsers
+                      if user._id.toString() === id
+                        option(value= user._id.toString())= user.name
+                button.tiny.radius Add Member
+        .small-12.columns
+          label(style='text-align: center') -----OR-----
+        .small-12.columns
+          form(method='post', action='/accounts/'+account._id.toString())
+            fieldset
+              legend Invite members
+              label Member's email
+              input(type='email', name='email', required=true)
+              label Send a note
+              textarea(type='text', name='message', required=true)
+              button.tiny.radius Send Note
+
+
+  .row
+  .row#members.hide
     .small-6.columns
+      h6: strong Members Balance
       table(style='width:100%')
         thead
           th Members
           th Email
           th Share
+          th Balance
         tbody
           each user in users
             tr
               td=user.name
               td=user.email
-              each share in account.logics
-                if share.hasOwnProperty(user._id.toString())
-                  td= share[user._id.toString()]+'%'
-  if account.update.length > 0
-    .row
-      .small-6.columns
+              each logic in account.logics
+                if user._id.toString() === logic.userId
+                  td= logic.share + '%'
+              each bal in account.balance
+                if user._id.toString() === bal.userId
+                  td= accounting.formatMoney(bal.curBal)
+
+
+  .row
+    .small-6.columns
+      if records.length > 0
+        h6: strong Payment History
         table(style='width:100%')
           thead
-            th Date
-            th Amount
+            th: a(href='#')= 'Date'
             th User
+            th Amount
+            th Note
+            th Attachment
           tbody
-            each data in account.update
+            each record in records
               tr
-                td= data.date
-                td= data.amount
+                td= moment(record.date).format("MMM Do YY")
                 each user in users
-                  if data.paidBy === user._id.toString()
+                  if record.userId.toString() === user._id.toString()
                     td= user.name
-
-
+                td= record.amount
+                if record.note
+                  td: a(href='/records/' + record._id.toString())= 'note'
+                else
+                  td= 'No note'
+                if record.attachment
+                  td: a(href='/records/' + record._id.toString())= 'view'
+                else
+                  td= 'No file'
 
 

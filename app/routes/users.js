@@ -2,6 +2,9 @@
 
 var User = require('../models/user');
 var Account = require('../models/account');
+var Record = require('../models/record');
+var accounting = require('accounting');
+var moment = require('moment');
 
 
 exports.index = function(req, res){
@@ -55,10 +58,13 @@ exports.authenticate = function(req, res){
 
 exports.show = function(req, res){
   User.findById(req.params.id, function(user){
-    Account.findByUserId(user._id.toString(), function(accounts){
-      Account.findByMemberId(req.params.id, function(membersOf){
-        console.log('*&^%$#@@!!@#$%^^&&&&========', membersOf, '=======JUYVHGFDR$%^&*#@@@#$$%%');
-        res.render('users/show', {user:user, membersOf:membersOf, accounts:accounts});
+    Account.findAll(function(allAccounts){
+      Account.findByUserId(user._id.toString(), function(accounts){
+        Account.findByMemberId(req.params.id, function(membersOf){
+          Record.findByUserId(req.session.userId.toString(), function(records){
+            res.render('users/show', {title:'User Profile', allAccounts:allAccounts, moment:moment, accounting:accounting, user:user, records:records, membersOf:membersOf, accounts:accounts});
+          });
+        });
       });
     });
   });

@@ -1,14 +1,21 @@
 extends ../shared/template
 
+block less
+    link(rel='stylesheet', href='/less/account-create.css')
+
 block content
 
-  .row
-    .small-6.columns
-      form(method='post', action='/accounts', enctype='multipart/form-data')
-        fieldset
-          legend= title
-          label Account Name
-          input(type='text', name='name' autofocus=true, required=true)
-          label Description
-          textarea(type='text', name='description' required=true)
-          button.tiny.radius Create Account
+  #container
+    #new-account
+      .row
+        .small-12.columns
+          form(method='post', action='/accounts', enctype='multipart/form-data')
+            fieldset
+              legend= title
+              label Account Name
+              input(type='text', name='name' autofocus=true, required=true)
+              label Description
+              textarea(type='text', name='description' required=true)
+              button.tiny.radius Create Account
+        .small-6.columns
+          #img

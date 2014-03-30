@@ -43,34 +43,6 @@ User.prototype.register = function(oldpath, fn){
   });
 };
 
-function addPic(oldpath, fn){
-  var filename = path.basename(oldpath);
-  var abspath = __dirname + '/../static';
-  var relpath = '/img/users/' + filename;
-
-  fs.renameSync(oldpath, abspath+relpath);
-
-  fn(relpath);
-}
-
-function hashPassword(password, fn){
-  bcrypt.hash(password, 8, function(err, hash){
-    fn(hash);
-  });
-}
-
-function insert(user, fn){
-  users.findOne({email:user.email}, function(err, userFound){
-    if(!userFound){
-      users.insert(user, function(err, record){
-        fn(err);
-      });
-    }else{
-      fn();
-    }
-  });
-}
-
 User.findByAccountId = function(id, fn){
   users.find({accounts:id}).toArray(function(err, records){
     fn(records);
@@ -116,3 +88,30 @@ User.findByEmailandPassword = function(email, password, fn){
   });
 };
 
+function addPic(oldpath, fn){
+  var filename = path.basename(oldpath);
+  var abspath = __dirname + '/../static';
+  var relpath = '/img/users/' + filename;
+
+  fs.renameSync(oldpath, abspath+relpath);
+
+  fn(relpath);
+}
+
+function hashPassword(password, fn){
+  bcrypt.hash(password, 8, function(err, hash){
+    fn(hash);
+  });
+}
+
+function insert(user, fn){
+  users.findOne({email:user.email}, function(err, userFound){
+    if(!userFound){
+      users.insert(user, function(err, record){
+        fn(err);
+      });
+    }else{
+      fn();
+    }
+  });
+}

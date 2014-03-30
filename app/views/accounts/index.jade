@@ -1,11 +1,12 @@
 extends ../shared/template
 
 block content
-  h1= title
+  h3= title
 
 
   if accounts.length === 0
-    a(href='/accounts/new') Create Happy-share account
+    #no-accounts='You haven\'t created an account yet, '
+      a(href='/accounts/new') Create Happy-share account
   else
     table
       thead
@@ -16,8 +17,10 @@ block content
       each account in accounts
         tbody
           tr
-            td: a(href='/accounts/'+ account._id.toString())= account.name
-            td: a(href='/users/'+user._id.toString())= user.name
-            td(style='text-align: center'): a(href='#')=account.members.length
+            td: a(href='/accounts/members/'+ account._id.toString())= account.name
+            each user in users
+              if account.ownerId.toString() === user._id.toString()
+                td: a(href='#')= user.name
+            td(style='text-align: center'): a(href='/accounts/members/'+account._id.toString())=account.members.length
             td= account.description
 

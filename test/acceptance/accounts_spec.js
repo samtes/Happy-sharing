@@ -103,6 +103,17 @@ describe('account', function(){
     });
   });
 
+  describe('GET /accounts/members/:id', function(){
+    it('should display the account members page', function(done){
+      request(app)
+      .get('/accounts/members/'+a1._id.toString())
+      .end(function(err, res){
+        expect(res.status).to.equal(302);
+        done();
+      });
+    });
+  });
+
   describe('POST /accounts/:id', function(){
     it('should send invitation email to unregistered user', function(done){
       request(app)
@@ -121,6 +132,18 @@ describe('account', function(){
       request(app)
       .post('/accounts/member/'+a1._id.toString())
       .field('member', u2._id.toString())
+      .end(function(err, res){
+        expect(res.status).to.equal(302);
+        done();
+      });
+    });
+  });
+
+  describe('POST /accounts/logic/:id', function(){
+    it('should set the share of members for an account', function(done){
+      request(app)
+      .post('/accounts/logic/'+a1._id.toString())
+      .field('1234', '50')
       .end(function(err, res){
         expect(res.status).to.equal(302);
         done();

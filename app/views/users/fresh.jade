@@ -1,21 +1,27 @@
 extends ../shared/template
 
+block less
+    link(rel='stylesheet', href='/less/user-registration.css')
+
 block content
 
-
-  .row
-    .small-6.columns
-      form(method='post', action='/register', enctype='multipart/form-data')
-        fieldset
-          legend= title
-          label Name
-          input(type='text', name='name' required=true)
-          label Email
-          input(type='email', name='email' required=true)
-          label Password
-          input(type='password', name='password' required=true)
-          label Profile picture
-          input(type='file', name='pic')
-          button.tiny.radius Register
+  #container
+    #new-account
+      .row
+        .small-12.columns.large-6.columns
+          form(method='post', action='/register', enctype='multipart/form-data')
+            fieldset
+              legend= title
+              label Name
+              input(type='text', name='name' required=true)
+              label Email
+              input(type='email', name='email' required=true)
+              label Password
+              input(type='password', name='password' required=true)
+              label Profile picture
+              input(type='file', name='pic')
+              button.tiny.radius Register
+        .small-6.columns
+          #img
 
 

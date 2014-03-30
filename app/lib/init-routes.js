@@ -16,6 +16,7 @@ function load(app, fn){
   var home = require('../routes/home');
   var users = require('../routes/users');
   var accounts = require('../routes/accounts');
+  var records = require('../routes/records');
 
   app.get('/', d, home.index);
   app.get('/register', d, users.fresh);
@@ -25,7 +26,8 @@ function load(app, fn){
   app.get('/accounts/:id', d, accounts.show);
   app.post('/accounts', d, accounts.create);
   app.post('/accounts/logic/:id', d, accounts.setLogic);
-  app.post('/accounts/payments/:id', d, accounts.paid);
+  app.get('/records/:id', d, records.show);
+  app.post('/records/new/:id', d, records.create);
   app.post('/accounts/member/:id', d, accounts.member);
   app.post('/accounts/:id', d, accounts.invite);
   app.post('/register', d, users.create);

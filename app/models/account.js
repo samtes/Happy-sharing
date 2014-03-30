@@ -3,9 +3,6 @@
 
 module.exports = Account;
 
-//var bcrypt = require('bcrypt');
-//var path = require('path');
-//var fs = require('fs');
 var users = global.nss.db.collection('users');
 var accounts = global.nss.db.collection('accounts');
 var Mongo = require('mongodb');
@@ -19,8 +16,8 @@ function Account(account){
   this.description = account.description;
   this.ownerId = Mongo.ObjectID(account.ownerId);
   this.members = [account.ownerId];
-  this.update = [];
-  this.logics = [] ;
+  this.balance = [account.balance];
+  this.logics = [account.logic];
 }
 
 Account.prototype.insert = function(fn){
@@ -29,11 +26,11 @@ Account.prototype.insert = function(fn){
   });
 };
 
-function updateInsert(account, fn){
-  accounts.update({_id:account._id}, account, function(err, count){
+Account.prototype.update = function(fn){
+  accounts.update({_id:this._id}, this, function(err, count){
     fn(count);
   });
-}
+};
 
 Account.prototype.addMember = function(memberId, fn){
   var self = this;
@@ -41,6 +38,10 @@ Account.prototype.addMember = function(memberId, fn){
     if(user){
       user.accounts.push(self._id.toString());
       user.update(function(){});
+      var bal = {userId:memberId, curBal: 0};
+      self.balance.push(bal);
+      var logic = {userId:memberId, share: 0};
+      self.logics.push(logic);
       self.members.push(memberId);
       self.members = _.uniq(self.members);
       updateInsert(self, function(count){
@@ -56,6 +57,19 @@ Account.prototype.addMember = function(memberId, fn){
       fn();
     }
   });
+};
+
+Account.prototype.notMembers = function(users, fn){
+  var self = this;
+  var notMembers =  _.difference(_.map(users, function(user){
+    return user._id.toString();
+  }), self.members);
+  fn(notMembers);
+};
+
+Account.prototype.checkShares = function(fn){
+  var state = _.where(this.logics, {'share': 0});
+  fn(state);
 };
 
 Account.prototype.removeMember = function(memberId, fn){
@@ -81,6 +95,12 @@ Account.prototype.removeMember = function(memberId, fn){
   });
 };
 
+Account.findAll = function(fn){
+  accounts.find().toArray(function(err, records){
+    fn(records);
+  });
+};
+
 Account.findById = function(id, fn){
   var _id = Mongo.ObjectID(id);
   accounts.findOne({_id:_id}, function(err, record){
@@ -100,31 +120,6 @@ Account.sendInviteEmail = function(data, fn){
   });
 };
 
-Account.prototype.payment = function(data, paidBy, account, users, fn){
-  var self = this;
-  self.update.push(data);
-  updateInsert(self, function(count){
-    var emailData = {amount:data.amount, paidBy:paidBy.name};
-    getEmails(users, emailData, function(){
-      fn(count);
-    });
-  });
-};
-
-function getEmails(users, data, fn){
-  _.map(users, function(user){
-    return sendPaymentEmail(user.email, data, function(){
-    });
-  });
-  fn();
-}
-
-function sendPaymentEmail(toEmail, data, fn){
-  email.paymentMade({to:toEmail, amount:data.amount, paidBy:data.name}, function(err, body){
-    fn(err, body);
-  });
-}
-
 Account.findByUserId = function(id, fn){
   var ownerId = Mongo.ObjectID(id);
   accounts.find({ownerId:ownerId}).toArray(function(err, records){
@@ -135,11 +130,55 @@ Account.findByUserId = function(id, fn){
 
 Account.prototype.logic = function(data, fn){
   var self = this;
-  self.logics = [];
-  self.logics.push(data);
-  updateInsert(self, function(count){
-    fn(count);
+  var ids = Object.keys(data);
+  cleanLogic(ids, data, function(newShare){
+    self.logics = newShare;
+    fn();
   });
 };
 
+function cleanLogic(idsArr, existingObj, fn) {
+  var test =  _.map(idsArr, function(id){
+    return {userId: id, share: existingObj[id] * 1};
+  });
+  fn(test);
+}
+
+Account.prototype.updateBalance = function(data, fn){
+  var self = this;
+  setBalance(self.logics, self.balance, self.members, data, function(){
+    updateInsert(self, function(count){
+      fn();
+    });
+  });
+};
+
+function setBalance(logics, balance, members, payment, fn){
+  _.map(balance, function(each){
+    if (each.userId === payment.userId){
+      findShare(logics, each, function(share){
+        each.curBal = (each.curBal * 1) + ((payment.amount * 1) - (payment.amount * share / 100));
+      });
+    } else {
+      findShare(logics, each, function(share){
+        each.curBal = (each.curBal * 1) - (payment.amount * 1) * ((share * 1) / 100);
+      });
+    }
+  });
+  fn();
+}
+
+function findShare(shares, payment, fn){
+  _.map(shares, function(share){
+    if (share.userId === payment.userId){
+      fn(share.share);
+    }
+  });
+}
+
+function updateInsert(account, fn){
+  accounts.update({_id:account._id}, account, function(err, count){
+    fn(count);
+  });
+}
 

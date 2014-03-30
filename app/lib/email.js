@@ -21,7 +21,7 @@ exports.removedAccount = function(data, fn){
 };
 
 exports.paymentMade = function(data, fn){
-  send({from:'admin@happyshare.us', to:data.to, account:data.account, subject:'Happy-Share Payment Made', template:'payment'}, fn);
+  send({from:'admin@happyshare.us', to:data.to, name:data.name, day:data.day, amount:data.amount, paidBy:data.paidBy, account:data.account, subject:'Happy-Share Payment Made', template:'payment'}, fn);
 };
 
 function send(data, fn){

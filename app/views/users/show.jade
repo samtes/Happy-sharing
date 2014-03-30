@@ -1,15 +1,18 @@
 extends ../shared/template
 
-block content
-  h1= user.name
+block less
+    link(rel='stylesheet', href='/less/user-show.css')
 
-  #name= user.name
-  #email= user.email
-  #role= user.role
+block content
+  h3= title
+
+  h6= 'User\'s name: ' + user.name
+  h6=  'Email: ' + user.email
 
   if membersOf.length === 0
     a(href='/accounts/new') Create Happy-share account
   else
+    h6: strong Your Member Accounts
     table
       thead
         th Name
@@ -18,7 +21,32 @@ block content
       tbody
       each account in membersOf
           tr
-            td: a(href='/accounts/'+ account._id.toString())= account.name
+            td: a(href='/accounts/members/'+account._id.toString())= account.name
             td(style='text-align: center'): a(href='/accounts/members/'+account._id.toString())= account.members.length
             td= account.description
 
+  if records.length > 0
+    h6: strong Your Payments
+    table
+      thead
+        th Account
+        th Date
+        th Amount
+        th Note
+        th File
+      tbody
+        each record in records
+          each account in allAccounts
+            if record.accountId.toString() === account._id.toString()
+              tr
+                td: a(href='/accounts/'+ account._id.toString())= account.name
+                td= moment(record.date).format("MMM Do YY")
+                td= accounting.formatMoney(record.amount)
+                if record.note
+                  td: a(href='#')= 'note'
+                else
+                  td= 'None'
+                if record.attachment
+                  td: a(href='/records/'+record._id.toString())= 'view'
+                else
+                  td= 'No file'
