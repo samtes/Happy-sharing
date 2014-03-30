@@ -5,7 +5,7 @@
 
 process.env.DBNAME = 'happy-share-test';
 var expect = require('chai').expect;
-var Record, User, Account, u1;
+var Record, User, Account, email, u1;
 var fs = require('fs');
 var exec = require('child_process').exec;
 
@@ -17,6 +17,7 @@ describe('User', function(){
       User = require('../../app/models/user');
       Account = require('../../app/models/account');
       Record = require('../../app/models/record');
+      email = require('../../app/lib/email');
       done();
     });
   });
@@ -350,4 +351,23 @@ describe('User', function(){
     });
   });
 
+  describe('.addedToAccount', function(){
+    it('should insert a member to the members array', function(done){
+      var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234', role:'member'});
+      var u3 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234', role:'member'});
+      u2.register('', function(){
+        u3.register('', function(){
+          var a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u2._id.toString(), members:[u2._id.toString()], balance:[{userId:u2._id.toString(), curBal:0}], logic:[{userId:u2._id.toString(), share:0}]});
+          a1.insert(function(){
+            a1.addMember(u3._id.toString(), function(){
+              email.addedToAccount({to:u2.email, name:u2.name, account:a1.name}, function(err, body){
+                expect(body).to.be.undefined;
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });

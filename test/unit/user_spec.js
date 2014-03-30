@@ -5,7 +5,7 @@
 
 process.env.DBNAME = 'happy-share-test';
 var expect = require('chai').expect;
-var User, Account;
+var User, Account, email;
 var fs = require('fs');
 var exec = require('child_process').exec;
 
@@ -16,6 +16,7 @@ describe('User', function(){
     initMongo.db(function(){
       User = require('../../app/models/user');
       Account = require('../../app/models/account');
+      email = require('../../app/lib/email');
       done();
     });
   });
@@ -71,6 +72,19 @@ describe('User', function(){
           expect(u2.password).to.not.equal('1234');
           expect(u1._id.toString()).to.have.length(24);
           expect(u2._id).to.not.be.ok;
+          done();
+        });
+      });
+    });
+  });
+
+  describe('.sendWelcome', function(){
+    it('should send thanks for joining email to a new user', function(done){
+      var u2 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234'});
+      u2.register('', function(){
+        var data = {to:u2.email, name:u2.name};
+        email.sendWelcome(data, function(err, body){
+          expect(body).to.be.undefined;
           done();
         });
       });

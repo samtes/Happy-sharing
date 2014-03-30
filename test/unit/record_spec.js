@@ -5,7 +5,7 @@
 
 process.env.DBNAME = 'happy-share-test';
 var expect = require('chai').expect;
-var User, Account, Record;
+var User, Account, Record, email;
 var fs = require('fs');
 var exec = require('child_process').exec;
 
@@ -17,6 +17,7 @@ describe('Record', function(){
       User = require('../../app/models/user');
       Account = require('../../app/models/account');
       Record = require('../../app/models/record');
+      email = require('../../app/lib/email');
       done();
     });
   });
@@ -76,6 +77,29 @@ describe('Record', function(){
                 expect(r1.date).to.be.instanceof(Date);
                 expect(r1.accountId).to.deep.equal(a1._id);
                 done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('.paymentMadeEmail', function(){
+    it('should send a payment made email toall users', function(done){
+      var u1 = new User({name: 'Sam', email:'sami@nomail.com', password:'1234'});
+      var u2 = new User({name: 'Bob', email:'bob@nomail.com', password:'1234'});
+      u1.register('', function(){
+        u2.register('', function(){
+          var a1 = new Account({name: 'rent', description:'sharing the rent of our apartment', ownerId:u2._id.toString(), members:[u2._id.toString()], balance:[{userId:u2._id.toString(), curBal:0}], logic:[{userId:u2._id.toString(), share:0}]});
+          a1.insert(function(){
+            a1.addMember(u2._id.toString(), function(){
+              var r1 = new Record({accountId:a1._id.toString(), date:'03/03/2014', userId:u1._id.toString(), Amount: '200'});
+              r1.insert('', '', function(){
+                email.paymentMade({to:u2.email, name:u2.name, account:a1.name}, function(err, body){
+                  expect(body).to.be.undefined;
+                  done();
+                });
               });
             });
           });

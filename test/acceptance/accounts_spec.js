@@ -150,36 +150,4 @@ describe('account', function(){
       });
     });
   });
-/*
-
-  describe('GET /logout', function(){
-    it('should log a user out of the app', function(done){
-      request(app)
-      .get('/logout')
-      .expect(302, done);
-    });
-  });
-
-  describe('AUTHORIZED', function(){
-    beforeEach(function(done){
-      request(app)
-      .post('/login')
-      .field('email', 'sami@nomail.com')
-      .field('password', '1234')
-      .end(function(err, res){
-        cookie = res.headers['set-cookie'];
-        done();
-      });
-    });
-
-    describe('GET /users/:id', function(){
-      it('should render to the show page', function(done){
-        request(app)
-        .get('/users/'+ u1._id.toString())
-        .set('cookie', cookie)
-        .expect(200, done);
-      });
-    });
-  });
-  */
 });
