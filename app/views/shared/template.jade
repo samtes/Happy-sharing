@@ -27,6 +27,10 @@ html(class='no-js', lang='en')
             li: a(href='/accounts/new') Create Account
         ul.right
           if user
+            if user.pic
+              li.divider
+              li
+                #pic(style='background-image:url('+user.pic+')')
             li.divider
             li: a(href='/users/'+user._id.toString())='Welcome '+user.name
             li.divider
