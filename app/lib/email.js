@@ -5,23 +5,23 @@ var fs = require('fs');
 var jade = require('jade');
 
 exports.sendWelcome = function(data, fn){
-  send({from:'admin@happyshare.us', to:data.to, name:data.name, subject:'Welcome to Happy Share', template:'welcome'}, fn);
+  send({from:'happyshare@samtes.us', to:data.to, name:data.name, subject:'Welcome to Happy Share', template:'welcome'}, fn);
 };
 
 exports.inviteMember = function(data, fn){
-  send({from:'admin@happyshare.us', to:data.to, message:data.message, subject:'You have been invited to Haapy-share', template:'invited'}, fn);
+  send({from:'happyshare@samtes.us', to:data.to, message:data.message, subject:'You have been invited to Haapy-share', template:'invited'}, fn);
 };
 
 exports.addedToAccount = function(data, fn){
-  send({from:'admin@happyshare.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-added'}, fn);
+  send({from:'happyshare@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-added'}, fn);
 };
 
 exports.removedAccount = function(data, fn){
-  send({from:'admin@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-removed'}, fn);
+  send({from:'happyshare@samtes.us', to:data.to, name:data.name, account:data.account, subject:'Added to Happy-Share account', template:'account-removed'}, fn);
 };
 
 exports.paymentMade = function(data, fn){
-  send({from:'admin@happyshare.us', to:data.to, name:data.name, day:data.day, amount:data.amount, paidBy:data.paidBy, account:data.account, subject:'Happy-Share Payment Made', template:'payment'}, fn);
+  send({from:'happyshare@samtes.us', to:data.to, name:data.name, day:data.day, amount:data.amount, paidBy:data.paidBy, account:data.account, subject:'Happy-Share Payment Made', template:'payment'}, fn);
 };
 
 function send(data, fn){

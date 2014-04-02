@@ -161,7 +161,7 @@ function setBalance(logics, balance, members, payment, fn){
       });
     } else {
       findShare(logics, each, function(share){
-        each.curBal = (each.curBal * 1) - (payment.amount * 1) * ((share * 1) / 100);
+        each.curBal = (each.curBal * 1) - (payment.amount * share / 100);
       });
     }
   });
