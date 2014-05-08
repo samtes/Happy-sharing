@@ -60,6 +60,14 @@ User.findById = function(id, fn){
   });
 };
 
+User.prototype.removeAccount = function(accountId, fn){
+  var self = this;
+  _.remove(self.accounts, function(account){
+    return account === accountId;
+  });
+  fn();
+};
+
 User.findAll = function(fn){
   users.find().toArray(function(err, records){
     fn(records);

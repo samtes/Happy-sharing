@@ -3,6 +3,7 @@
   'use strict';
 
   $(document).ready(initialize);
+  var row;
 
   function initialize(){
     $(document).foundation();
@@ -13,6 +14,30 @@
     $('#close').click(displayShareSetter);
     $('#close-pay-form').click(displayPayUpdater);
     $('#close-member-form').click(displayMemberUpdater);
+    $('.remove_member').click(removeMember);
+  }
+
+  function removeMember(){
+    debugger;
+    if(confirm('Are you sure you want to delete this member?')){
+      row = this;
+      var memberId = $(this).closest('tr').attr('id');
+      var accountId = window.location.pathname.slice(18);
+      var url = '/accounts/members/'+ accountId + '/' + memberId;
+      var type = 'PUT';
+      var success = removeRow;
+      console.log({url:url, type:type, success:success});
+      $.ajax({url:url, type:type, success:success});
+    } else {
+      alert('not deleting!');
+    }
+  }
+
+  function removeRow(data){
+    console.log(data);
+    if (data.state === true){
+      $(row).closest('tr').remove();
+    }
   }
 
   function displayMemberUpdater(){

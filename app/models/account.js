@@ -3,7 +3,6 @@
 
 module.exports = Account;
 
-var users = global.nss.db.collection('users');
 var accounts = global.nss.db.collection('accounts');
 var Mongo = require('mongodb');
 var email = require('../lib/email');
@@ -74,8 +73,28 @@ Account.prototype.checkShares = function(fn){
 
 Account.prototype.removeMember = function(memberId, fn){
   var self = this;
-  var _id = Mongo.ObjectID(memberId);
-  users.findOne({_id:_id}, function(err, user){
+  if (memberId === self.ownerId.toString()){
+    fn();
+  } else {
+    _.remove(self.members, function(record){
+      return record === memberId;
+    });
+    _.remove(self.balance, function(record){
+      return record.userId === memberId;
+    });
+    _.remove(self.logics, function(record){
+      return record.userId === memberId;
+    });
+    fn(memberId);
+  }
+};
+
+/*
+Account.prototype.removeMember = function(memberId, fn){
+  console.log('This is the id BEFORE mogofied', memberId);
+  var self = this;
+  console.log('This is the id AFTER mogofied', self._id);
+  users.findOne({_id:self._id}, function(err, user){
     if(user){
       _.remove(self.members, function(member){
         return member === memberId;
@@ -94,6 +113,7 @@ Account.prototype.removeMember = function(memberId, fn){
     }
   });
 };
+*/
 
 Account.findAll = function(fn){
   accounts.find().toArray(function(err, records){

@@ -30,6 +30,7 @@ function load(app, fn){
   app.post('/records/new/:id', d, records.create);
   app.post('/accounts/member/:id', d, accounts.member);
   app.post('/accounts/:id', d, accounts.invite);
+  app.put('/accounts/members/:accountId/:memberId', d, accounts.remove);
   app.post('/register', d, users.create);
   app.get('/login', d, users.login);
   app.post('/login', d, users.authenticate);

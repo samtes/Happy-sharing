@@ -22,7 +22,7 @@ exports.fresh = function(req, res){
 exports.create = function(req, res){
   req.body.ownerId = req.session.userId;
   var userObj = req.session.userId;
-  req.body.balance = {userId:userObj, curBal: '0'};
+  req.body.balance = {userId:userObj, curBal: 0};
   req.body.logic = {userId:userObj, share: 0};
   var account = new Account(req.body);
   User.findById(req.session.userId, function(user){
@@ -83,6 +83,28 @@ exports.setLogic = function(req, res){
       account.update(function(){
         res.redirect('/accounts/members/'+account._id.toString());
       });
+    });
+  });
+};
+
+exports.remove = function(req, res){
+  Account.findById(req.params.accountId, function(account){
+    account.removeMember(req.params.memberId, function(state){
+      if (state){
+        account.update(function(){
+          Account.findById(req.params.accountId, function(updatedAccount){
+            User.findById(req.params.memberId, function(user){
+              user.removeAccount(req.params.accountId, function(){
+                user.update(function(){
+                  res.send({account:updatedAccount, state:true});
+                });
+              });
+            });
+          });
+        });
+      } else {
+        res.send({account:account, state:false});
+      }
     });
   });
 };

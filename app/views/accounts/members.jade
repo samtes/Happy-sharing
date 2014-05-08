@@ -103,9 +103,10 @@ block content
           th Email
           th Share
           th Balance
+          th Remove
         tbody
           each user in users
-            tr
+            tr(id=user._id.toString())
               td=user.name
               td=user.email
               each logic in account.logics
@@ -114,6 +115,7 @@ block content
               each bal in account.balance
                 if user._id.toString() === bal.userId
                   td= accounting.formatMoney(bal.curBal)
+              td: a.remove_member(href='#')= 'remove'
 
 
   .row
