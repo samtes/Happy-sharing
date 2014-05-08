@@ -6,6 +6,7 @@ var port = process.env.PORT || 4000;
 var express    = require('express');
 var less       = require('express-less');
 var session    = require('express-session');
+var bodyParser = require('body-parser');
 var RedisStore = require('connect-redis')(session);
 var initMongo  = require('./lib/init-mongo');
 var initRoutes = require('./lib/init-routes');
@@ -13,6 +14,7 @@ var lookupUser = require('./lib/lookup-user');
 var bounceUser = require('./lib/bounce-user');
 
 var app = express();
+app.use(bodyParser());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 

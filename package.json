@@ -24,7 +24,8 @@
     "express-less":    "*",
     "request":         "*",
     "express-session": "*",
-    "accounting":      "*"
+    "accounting":      "*",
+    "body-parser":     "*"
   },
   "devDependencies": {
     "grunt":                "*",
