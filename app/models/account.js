@@ -89,32 +89,6 @@ Account.prototype.removeMember = function(memberId, fn){
   }
 };
 
-/*
-Account.prototype.removeMember = function(memberId, fn){
-  console.log('This is the id BEFORE mogofied', memberId);
-  var self = this;
-  console.log('This is the id AFTER mogofied', self._id);
-  users.findOne({_id:self._id}, function(err, user){
-    if(user){
-      _.remove(self.members, function(member){
-        return member === memberId;
-      });
-      updateInsert(self, function(record){
-        if(record){
-          email.removedAccount({to:user.email, name:user.name, account:self.name}, function(err, body){
-            fn(err, body);
-          });
-        }else{
-          fn();
-        }
-      });
-    } else {
-      fn();
-    }
-  });
-};
-*/
-
 Account.findAll = function(fn){
   accounts.find().toArray(function(err, records){
     fn(records);
